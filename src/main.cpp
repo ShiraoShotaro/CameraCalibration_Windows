@@ -2,6 +2,7 @@
 #include <opencv2/opencv.hpp>
 
 #include <iostream>
+#include <fstream>
 
 int main(int argh, char* argv[])
 {
@@ -32,13 +33,25 @@ int main(int argh, char* argv[])
 		cv::imshow("window", frame);//‰æ‘œ‚ð•\Ž¦
 
 		switch (cv::waitKey(1)) {
-		case 113:
+		case 'q':
 			exit = true; break;
-		case 115:
+		case 's':
 			chess.addFrame();
-			camera_parameter = chess.calcParameter(cv::Size(frame.cols, frame.rows));
 			std::cout << "added samples. SAMPLE NUM = " << chess.getSampleCount() << std::endl;
-			std::cout << camera_parameter.toString() << std::endl << std::endl;
+			break;
+		case 'c':
+			chess.addFrame();
+			std::cout << "added samples. SAMPLE NUM = " << chess.getSampleCount() << std::endl;
+			std::cout << "Calculating..." << std::endl;
+			camera_parameter = chess.calcParameter(cv::Size(frame.cols, frame.rows));
+			std::cout << camera_parameter.toString() << std::endl;
+
+			std::cout << "File exporting..." << std::endl;
+			{
+				std::ofstream ofst("param.txt");
+				ofst << camera_parameter.toFileString() << std::endl;
+			}
+			std::cout << "Finished." << std::endl;
 			break;
 		}
 	}

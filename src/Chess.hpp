@@ -15,6 +15,8 @@ struct CameraParameter {
 	double result;
 
 	std::string toString() const;
+
+	std::string toFileString() const;
 };
 
 class Chess {
@@ -39,12 +41,13 @@ public:
 
 private:
 
+	static std::vector<std::vector<cv::Point3f>> objects_;
+	static std::vector<cv::Point3f> frame_objects_;
+
+	static std::vector<std::vector<cv::Point2f>> corners_;
 	std::vector<cv::Point2f> frame_corners_;
 
-	static std::vector<cv::Point3f> objects_;
-	static std::vector<cv::Point2f> corners_;
 
-	static std::vector<cv::Point3f> frame_objects_;
 
 	static void _initialize();
 

@@ -1,8 +1,10 @@
 #include "Chess.hpp"
 #include <sstream>
+#include <iostream>
+#include <iomanip>
 
-std::vector<cv::Point3f> wlib::Chess::objects_;
-std::vector<cv::Point2f> wlib::Chess::corners_;
+std::vector<std::vector<cv::Point3f>> wlib::Chess::objects_;
+std::vector<std::vector<cv::Point2f>> wlib::Chess::corners_;
 std::vector<cv::Point3f> wlib::Chess::frame_objects_;
 
 namespace {
@@ -28,17 +30,21 @@ bool wlib::Chess::detectChess(cv::Mat & input_frame)
 
 void wlib::Chess::addFrame(void)
 {
-	if (this->frame_corners_.empty()) return;
 	this->_initialize();
-	this->objects_.insert(this->objects_.end(), this->frame_objects_.begin(), this->frame_objects_.end());
-	this->corners_.insert(this->corners_.end(), this->frame_corners_.begin(), this->frame_corners_.end());
-	this->frame_corners_.clear();
+	if (this->frame_corners_.size() != this->frame_objects_.size()) return;
+	this->objects_.emplace_back(this->frame_objects_);
+	this->corners_.emplace_back(this->frame_corners_);
 }
-
 
 wlib::CameraParameter wlib::Chess::calcParameter(const cv::Size & image_size) const
 {
 	assert(this->objects_.size() == this->corners_.size());
+
+	cv::InputArray obj(this->objects_), crn(this->corners_);
+	for (int i = 0; i < this->corners_.size(); ++i) {
+		std::cout << "[" << i << "] obj = " << obj.getMat(i).checkVector(3, CV_32F);
+		std::cout << " crn = " << crn.getMat(i).checkVector(2, CV_32F) << std::endl;
+	}
 
 	CameraParameter ret;
 	ret.result = 0;
@@ -67,23 +73,42 @@ void wlib::Chess::_initialize()
 std::string wlib::CameraParameter::toString() const
 {
 	std::stringstream out;
+	out << std::fixed << std::setprecision(8);
 	out << "RESULT = " << this->result << std::endl;
-	/*out << "(Fx, Fy) = (" << this->cameraMat.at<float>(0, 0) << ", " << this->cameraMat.at<float>(1, 1) << ")\t";
-	out << "(Cx, Cy) = (" << this->cameraMat.at<float>(2, 0) << ", " << this->cameraMat.at<float>(2, 1) << ")" << std::endl;
-	if (this->distCoeff.elemSize() >= 4) {
-		out << "k1 = " << this->distCoeff.at<float>(0) << "k2 = " << this->distCoeff.at<float>(1) << "p1 = " << this->distCoeff.at<float>(2) << "p2 = " << this->distCoeff.at<float>(3);
+	out << "(Fx, Fy) = (" << this->cameraMat.at<double>(0, 0) << ", " << this->cameraMat.at<double>(1, 1) << ")\t";
+	out << "(Cx, Cy) = (" << this->cameraMat.at<double>(0, 2) << ", " << this->cameraMat.at<double>(1, 2) << ")" << std::endl;
+	if (this->distCoeff.cols >= 4) {
+		out << "k1 = " << this->distCoeff.at<double>(0, 0) << " k2 = " << this->distCoeff.at<double>(0, 1) << " p1 = " << this->distCoeff.at<double>(0, 2) << " p2 = " << this->distCoeff.at<double>(0, 3);
 	}
-	if (this->distCoeff.elemSize() >= 5) {
-		out << "k3 = " << this->distCoeff.at<float>(4);
+	if (this->distCoeff.cols >= 5) {
+		out << " k3 = " << this->distCoeff.at<double>(0, 4);
 	}
 	out << std::endl;
-	if (this->distCoeff.elemSize() >= 8) {
-		out << "k4 = " << this->distCoeff.at<float>(5) << "k5 = " << this->distCoeff.at<float>(6) << "k6 = " << this->distCoeff.at<float>(7);
+	if (this->distCoeff.cols >= 8) {
+		out << "k4 = " << this->distCoeff.at<double>(0, 5) << " k5 = " << this->distCoeff.at<double>(0, 6) << " k6 = " << this->distCoeff.at<double>(0, 7);
 	}
-	if (this->distCoeff.elemSize() >= 12) {
-		out << "s1 = " << this->distCoeff.at<float>(8) << "s2 = " << this->distCoeff.at<float>(9) << "s3 = " << this->distCoeff.at<float>(10) << "s4 = " << this->distCoeff.at<float>(11);
-	}*/
+	if (this->distCoeff.cols >= 12) {
+		out << " s1 = " << this->distCoeff.at<double>(0, 8) << " s2 = " << this->distCoeff.at<double>(0, 9) << " s3 = " << this->distCoeff.at<double>(0, 10) << " s4 = " << this->distCoeff.at<double>(0, 11);
+	}
 	out << std::endl;
 	
+	return out.str();
+}
+
+std::string wlib::CameraParameter::toFileString() const
+{
+	std::stringstream out;
+	out << std::fixed << std::setprecision(8);
+	out << "#RESULT = " << this->result << std::endl;
+	out << "Camera.fx: " << this->cameraMat.at<double>(0, 0) << std::endl;
+	out << "Camera.fy: " << this->cameraMat.at<double>(1, 1) << std::endl;
+	out << "Camera.cx: " << this->cameraMat.at<double>(0, 2) << std::endl;
+	out << "Camera.cy: " << this->cameraMat.at<double>(1, 2) << std::endl << std::endl;
+
+	out << "Camera.k1: " << this->distCoeff.at<double>(0, 0) << std::endl;
+	out << "Camera.k2: " << this->distCoeff.at<double>(0, 1) << std::endl;
+	out << "Camera.p1: " << this->distCoeff.at<double>(0, 2) << std::endl;
+	out << "Camera.p2: " << this->distCoeff.at<double>(0, 3) << std::endl;
+
 	return out.str();
 }
