@@ -4,19 +4,18 @@
 
 #include <vector>
 #include <string>
-#include "opencv2/opencv.hpp"
-
+#include "opencv/cv.hpp"
 
 namespace wlib {
-/*
+
 struct CameraParameter {
-	//cv::Mat cameraMat;
-	//cv::Mat distCoeff;
-	//std::vector<cv::Mat> rvecs, tvecs;
+	cv::Mat cameraMat;
+	cv::Mat distCoeff;
+	std::vector<cv::Mat> rvecs, tvecs;
 	double result;
 
 	std::string toString() const;
-};*/
+};
 
 class Chess {
 public:
@@ -34,18 +33,18 @@ public:
 
 	void addFrame(void);
 
-	//CameraParameter calcParameter(const cv::Size & image_size) const;
+	CameraParameter calcParameter(const cv::Size & image_size) const;
 
 	static std::size_t getSampleCount(void);
 
 private:
 
-	std::vector<cv::Point3f> frame_corners_;
+	std::vector<cv::Point2f> frame_corners_;
 
 	static std::vector<cv::Point3f> objects_;
 	static std::vector<cv::Point2f> corners_;
 
-	static std::vector<cv::Point2f> frame_objects_;
+	static std::vector<cv::Point3f> frame_objects_;
 
 	static void _initialize();
 

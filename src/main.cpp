@@ -1,5 +1,5 @@
 #include "Chess.hpp"
-//#include <opencv2/opencv.hpp>
+#include <opencv2/opencv.hpp>
 
 #include <iostream>
 
@@ -17,7 +17,7 @@ int main(int argh, char* argv[])
 		return -1;
 	}
 
-	//wlib::CameraParameter camera_parameter;
+	wlib::CameraParameter camera_parameter;
 
 	for (bool exit = false; !exit; )
 	{
@@ -36,9 +36,9 @@ int main(int argh, char* argv[])
 			exit = true; break;
 		case 115:
 			chess.addFrame();
-			//camera_parameter = chess.calcParameter(cv::Size(frame.rows, frame.cols));
-			//std::cout << "added samples. SAMPLE NUM = " << chess.getSampleCount() << std::endl;
-			//std::cout << camera_parameter.toString() << std::endl << std::endl;
+			camera_parameter = chess.calcParameter(cv::Size(frame.rows, frame.cols));
+			std::cout << "added samples. SAMPLE NUM = " << chess.getSampleCount() << std::endl;
+			std::cout << camera_parameter.toString() << std::endl << std::endl;
 			break;
 		}
 	}

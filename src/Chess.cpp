@@ -3,7 +3,7 @@
 
 std::vector<cv::Point3f> wlib::Chess::objects_;
 std::vector<cv::Point2f> wlib::Chess::corners_;
-std::vector<cv::Point2f> wlib::Chess::frame_objects_;
+std::vector<cv::Point3f> wlib::Chess::frame_objects_;
 
 namespace {
 const cv::TermCriteria kTermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 20, 0.03);
@@ -35,17 +35,18 @@ void wlib::Chess::addFrame(void)
 	this->frame_corners_.clear();
 }
 
-/*
+
 wlib::CameraParameter wlib::Chess::calcParameter(const cv::Size & image_size) const
 {
-	//assert(this->objects_.size() == this->corners_.size());
+	assert(this->objects_.size() == this->corners_.size());
 
 	CameraParameter ret;
-	//ret.result = cv::calibrateCamera(this->objects_, this->corners_, image_size, ret.cameraMat, ret.distCoeff, ret.rvecs, ret.tvecs);
+	ret.result = 0;
+	ret.result = cv::calibrateCamera(this->objects_, this->corners_, image_size, ret.cameraMat, ret.distCoeff, ret.rvecs, ret.tvecs);
 
 	return ret;
 }
-*/
+
 std::size_t wlib::Chess::getSampleCount(void)
 {
 	return Chess::corners_.size();
@@ -62,12 +63,12 @@ void wlib::Chess::_initialize()
 		}
 	}
 }
-/*
+
 std::string wlib::CameraParameter::toString() const
 {
 	std::stringstream out;
 	out << "RESULT = " << this->result << std::endl;
-	out << "(Fx, Fy) = (" << this->cameraMat.at<float>(0, 0) << ", " << this->cameraMat.at<float>(1, 1) << ")\t";
+	/*out << "(Fx, Fy) = (" << this->cameraMat.at<float>(0, 0) << ", " << this->cameraMat.at<float>(1, 1) << ")\t";
 	out << "(Cx, Cy) = (" << this->cameraMat.at<float>(2, 0) << ", " << this->cameraMat.at<float>(2, 1) << ")" << std::endl;
 	if (this->distCoeff.elemSize() >= 4) {
 		out << "k1 = " << this->distCoeff.at<float>(0) << "k2 = " << this->distCoeff.at<float>(1) << "p1 = " << this->distCoeff.at<float>(2) << "p2 = " << this->distCoeff.at<float>(3);
@@ -81,9 +82,8 @@ std::string wlib::CameraParameter::toString() const
 	}
 	if (this->distCoeff.elemSize() >= 12) {
 		out << "s1 = " << this->distCoeff.at<float>(8) << "s2 = " << this->distCoeff.at<float>(9) << "s3 = " << this->distCoeff.at<float>(10) << "s4 = " << this->distCoeff.at<float>(11);
-	}
+	}*/
 	out << std::endl;
 	
 	return out.str();
 }
-*/
