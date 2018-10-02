@@ -36,7 +36,7 @@ int main(int argh, char* argv[])
 			exit = true; break;
 		case 115:
 			chess.addFrame();
-			camera_parameter = chess.calcParameter(cv::Size(frame.rows, frame.cols));
+			camera_parameter = chess.calcParameter(cv::Size(frame.cols, frame.rows));
 			std::cout << "added samples. SAMPLE NUM = " << chess.getSampleCount() << std::endl;
 			std::cout << camera_parameter.toString() << std::endl << std::endl;
 			break;

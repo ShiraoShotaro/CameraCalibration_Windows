@@ -14,10 +14,10 @@ wlib::Chess::~Chess(void) {}
 
 bool wlib::Chess::detectChess(cv::Mat & input_frame)
 {
-	cv::Size kPatternSize(kPatternRow, kPatternColumn);
+	cv::Size kPatternSize(kPatternColumn, kPatternRow);
 	bool ret = cv::findChessboardCorners(input_frame, kPatternSize, this->frame_corners_);
 	if (ret) {
-		cv::Mat gray(input_frame.rows, input_frame.cols, CV_8UC1);
+		cv::Mat gray(input_frame.cols, input_frame.rows, CV_8UC1);
 		cv::cvtColor(input_frame, gray, CV_BGR2GRAY);
 		cv::cornerSubPix(gray, this->frame_corners_, cv::Size(3, 3), cv::Size(-1, -1), kTermCriteria);
 		
